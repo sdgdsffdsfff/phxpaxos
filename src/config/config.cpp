@@ -29,6 +29,8 @@ namespace phxpaxos
 
 Config :: Config(
         const LogStorage * poLogStorage,
+        const bool bLogSync,
+        const int iSyncInterval,
         const bool bUseMembership,
         const NodeInfo & oMyNode, 
         const NodeInfoList & vecNodeInfoList,
@@ -36,7 +38,9 @@ Config :: Config(
         const int iMyGroupIdx,
         const int iGroupCount,
         MembershipChangeCallback pMembershipChangeCallback)
-    : m_bUseMembership(bUseMembership),
+    : m_bLogSync(bLogSync), 
+    m_iSyncInterval(iSyncInterval),
+    m_bUseMembership(bUseMembership),
     m_iMyNodeID(oMyNode.GetNodeID()), 
     m_iNodeCount(vecNodeInfoList.size()), 
     m_iMyGroupIdx(iMyGroupIdx),
@@ -193,12 +197,12 @@ void Config :: AddTmpNodeOnlyForLearn(const nodeid_t iTmpNodeID)
         return;
     }
 
-    m_mapTmpNodeOnlyForLearn[iTmpNodeID] = Time::GetTimestampMS() + TmpNodeTimeout;
+    m_mapTmpNodeOnlyForLearn[iTmpNodeID] = Time::GetSteadyClockMS() + TmpNodeTimeout;
 }
 
 const std::map<nodeid_t, uint64_t> & Config :: GetTmpNodeMap()
 {
-    uint64_t llNowTime = Time::GetTimestampMS();
+    uint64_t llNowTime = Time::GetSteadyClockMS();
 
     for (auto it = m_mapTmpNodeOnlyForLearn.begin(); it != end(m_mapTmpNodeOnlyForLearn);)
     {
@@ -220,12 +224,12 @@ const std::map<nodeid_t, uint64_t> & Config :: GetTmpNodeMap()
 void Config :: AddFollowerNode(const nodeid_t iMyFollowerNodeID)
 {
     static int iFollowerTimeout = ASKFORLEARN_NOOP_INTERVAL * 3;
-    m_mapMyFollower[iMyFollowerNodeID] = Time::GetTimestampMS() + iFollowerTimeout;
+    m_mapMyFollower[iMyFollowerNodeID] = Time::GetSteadyClockMS() + iFollowerTimeout;
 }
 
 const std::map<nodeid_t, uint64_t> & Config :: GetMyFollowerMap()
 {
-    uint64_t llNowTime = Time::GetTimestampMS();
+    uint64_t llNowTime = Time::GetSteadyClockMS();
 
     for (auto it = m_mapMyFollower.begin(); it != end(m_mapMyFollower);)
     {
@@ -249,5 +253,16 @@ const size_t Config :: GetMyFollowerCount()
     return m_mapMyFollower.size();
 }
 
+const bool Config :: LogSync() const
+{
+    return m_bLogSync;
 }
+
+const int Config :: SyncInterval() const 
+{
+    return m_iSyncInterval;
+}
+
+}
+
 

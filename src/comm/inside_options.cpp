@@ -84,7 +84,7 @@ const int InsideOptions :: GetStartAcceptTimeoutMs()
     }
     else
     {
-        return 2000;
+        return 1000;
     }
 }
 
@@ -166,7 +166,7 @@ const int InsideOptions :: GetLeanerSenderPrepareTimeoutMs()
 {
     if (m_bIsLargeBufferMode)
     {
-        return 5000;
+        return 6000;
     }
     else
     {
@@ -235,4 +235,5 @@ const int InsideOptions :: GetTcpConnectionNonActiveTimeout()
 }
 
 }
+
 

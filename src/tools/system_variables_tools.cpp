@@ -89,7 +89,7 @@ int main(int argc, char ** argv)
         return ret;
     }
 
-    SystemVSM oVSM(iGroupIdx, nullnode, &oDefaultLogStorage);
+    SystemVSM oVSM(iGroupIdx, nullnode, &oDefaultLogStorage, nullptr);
     ret = oVSM.Init();
     if (ret != 0)
     {
@@ -115,4 +115,5 @@ int main(int argc, char ** argv)
 
     return 0;
 }
+
 

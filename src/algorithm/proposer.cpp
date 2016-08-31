@@ -170,7 +170,10 @@ int Proposer :: NewValue(const std::string & sValue)
 {
     BP->GetProposerBP()->NewProposal(sValue);
 
-    m_oProposerState.SetValue(sValue);
+    if (m_oProposerState.GetValue().size() == 0)
+    {
+        m_oProposerState.SetValue(sValue);
+    }
 
     m_iLastPrepareTimeoutMs = START_PREPARE_TIMEOUTMS;
     m_iLastAcceptTimeoutMs = START_ACCEPT_TIMEOUTMS;
@@ -337,22 +340,16 @@ void Proposer :: OnPrepareReply(const PaxosMsg & oPaxosMsg)
     if (oPaxosMsg.rejectbypromiseid() == 0)
     {
         BallotNumber oBallot(oPaxosMsg.preacceptid(), oPaxosMsg.preacceptnodeid());
-
         PLGDebug("[Promise] PreAcceptedID %lu PreAcceptedNodeID %lu ValueSize %zu", 
                 oPaxosMsg.preacceptid(), oPaxosMsg.preacceptnodeid(), oPaxosMsg.value().size());
-        
         m_oMsgCounter.AddPromiseOrAccept(oPaxosMsg.nodeid());
-
         m_oProposerState.AddPreAcceptValue(oBallot, oPaxosMsg.value());
     }
     else
     {
         PLGDebug("[Reject] RejectByPromiseID %lu", oPaxosMsg.rejectbypromiseid());
-        
         m_oMsgCounter.AddReject(oPaxosMsg.nodeid());
-
         m_bWasRejectBySomeone = true;
-
         m_oProposerState.SetOtherProposalID(oPaxosMsg.rejectbypromiseid());
     }
 
@@ -499,4 +496,5 @@ void Proposer :: CancelSkipPrepare()
 }
 
 }
+
 

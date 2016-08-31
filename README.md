@@ -23,6 +23,9 @@
   * 内置Master选举功能。
   * 线上数据的实时增量checksum校验。
   * 网络、存储、监控、日志模块插件化，可由开发者自定义。
+  * 基于Paxos算法的安全的成员变更。
+  * 基于Paxos算法的集群签名保护，隔离非法签名的错误机器。
+  * 自适应的过载保护。
   
 # 局限
   * 一个PhxPaxos实例任一时刻只允许运行在单一进程（容许多线程）。
@@ -96,7 +99,7 @@
 | src/ut             | 单元测试             | 无                                 | gtest,gmock      |
 
 编译我们的Phxpaxo(libphxpaxos.a)类库，只需要protobuf和leveldb两个第三方库；而编译其他目录则需要glog和grpc这两个库。
-在编译前，需要先准备好这些第三方库，放在我们的third_party目录，可以直接放置，也可以通过软链的形式。
+在编译前，需要先准备好这些第三方库，放在我们的third_party目录，可以直接放置，也可以通过软链的形式，也可以git clone时加上--recursive参数获取third_party目录下所有的submodule。
 
 ### 编译环境
  * Linux。
